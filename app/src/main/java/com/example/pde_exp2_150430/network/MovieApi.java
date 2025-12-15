@@ -17,16 +17,16 @@ import java.util.List;
 public class MovieApi {
 
     private static final String URL = "https://uax.tionazo.com/pelis/peliculas";
+    // Base URL para las imágenes (asumiendo que están en la misma carpeta relativa)
+    private static final String BASE_IMAGE_URL = "https://uax.tionazo.com/pelis/";
 
     public static void getMovies(Context context, MovieCallback callback) {
         List<Movie> list = new ArrayList<>();
 
-        // Cambiado a JsonObjectRequest porque la respuesta empieza con { "peliculas": ... }
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.GET, URL, null,
                 response -> {
                     try {
-                        // Extraemos el array del campo "peliculas"
                         JSONArray jsonArray = response.getJSONArray("peliculas");
                         
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -34,22 +34,26 @@ public class MovieApi {
                             Movie m = new Movie();
                             m.titulo = obj.optString("titulo");
                             m.descripcion = obj.optString("descripcion");
-                            m.imagen = obj.optString("imagen");
                             
-                            // Si hay más campos como director o año, añadirlos aquí
-                            // m.director = obj.optString("director");
+                            String imgPath = obj.optString("imagen");
+                            // CORRECCIÓN: Si la ruta no es absoluta (no empieza por http), añadimos la base
+                            if (!imgPath.startsWith("http")) {
+                                m.imagen = BASE_IMAGE_URL + imgPath;
+                            } else {
+                                m.imagen = imgPath;
+                            }
                             
                             list.add(m);
                         }
                         callback.onResult(list);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(context, "Error parseando JSON: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, "Error procesando datos", Toast.LENGTH_SHORT).show();
                     }
                 },
                 error -> {
                     error.printStackTrace();
-                    Toast.makeText(context, "Error de red: " + error.toString(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Error de conexión", Toast.LENGTH_SHORT).show();
                     callback.onResult(new ArrayList<>());
                 }
         );
