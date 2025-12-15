@@ -1,14 +1,15 @@
 package com.example.pde_exp2_150430.adapter;
 
-
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
@@ -18,37 +19,60 @@ import com.example.pde_exp2_150430.ui.DetailActivity;
 
 import java.util.List;
 
-public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> {
+public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<Movie> movies;
-    private Context context;
+    private final List<Movie> movies;
+    private final Context context;
+    private final boolean isGrid;
 
     public MovieAdapter(List<Movie> movies, Context context) {
         this.movies = movies;
         this.context = context;
+
+        SharedPreferences prefs = context.getSharedPreferences("prefs", Context.MODE_PRIVATE);
+        this.isGrid = prefs.getBoolean("grid_mode", false);
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context)
-                .inflate(R.layout.item_movie_list, parent, false);
-        return new ViewHolder(view);
+    public int getItemViewType(int position) {
+        return isGrid ? 1 : 0;
+    }
+
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == 1) { // Grid
+            View view = LayoutInflater.from(context).inflate(R.layout.item_movie_grid, parent, false);
+            return new GridViewHolder(view);
+        } else { // List
+            View view = LayoutInflater.from(context).inflate(R.layout.item_movie_list, parent, false);
+            return new ListViewHolder(view);
+        }
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Movie movie = movies.get(position);
-        holder.tvTitle.setText(movie.titulo);
 
-        Glide.with(context)
-                .load(movie.imagen)
-                .into(holder.ivImage);
+        if (holder instanceof ListViewHolder) {
+            ListViewHolder listHolder = (ListViewHolder) holder;
+            listHolder.tvTitle.setText(movie.titulo);
+            Glide.with(context).load(movie.imagen).into(listHolder.ivImage);
+            
+            listHolder.itemView.setOnClickListener(v -> goToDetail(movie));
 
-        holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, DetailActivity.class);
-            intent.putExtra("movie", movie);
-            context.startActivity(intent);
-        });
+        } else if (holder instanceof GridViewHolder) {
+            GridViewHolder gridHolder = (GridViewHolder) holder;
+            Glide.with(context).load(movie.imagen).into(gridHolder.ivImage);
+
+            gridHolder.itemView.setOnClickListener(v -> goToDetail(movie));
+        }
+    }
+
+    private void goToDetail(Movie movie) {
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra("movie", movie);
+        context.startActivity(intent);
     }
 
     @Override
@@ -56,15 +80,23 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.ViewHolder> 
         return movies.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    static class ListViewHolder extends RecyclerView.ViewHolder {
         ImageView ivImage;
         TextView tvTitle;
 
-        ViewHolder(View itemView) {
+        ListViewHolder(View itemView) {
             super(itemView);
             ivImage = itemView.findViewById(R.id.ivImage);
             tvTitle = itemView.findViewById(R.id.tvTitle);
         }
     }
-}
 
+    static class GridViewHolder extends RecyclerView.ViewHolder {
+        ImageView ivImage;
+
+        GridViewHolder(View itemView) {
+            super(itemView);
+            ivImage = itemView.findViewById(R.id.ivImage);
+        }
+    }
+}

@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ExamenMovies</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="go_register">Don\'t have an account? Sign up</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="grid_mode">Grid View</string>
+
+    <string name="error_empty_fields">Fill all fields</string>
+    <string name="error_login">Authentication error</string>
+    <string name="error_password_policy">Password does not meet policy</string>
+    <string name="register_ok">Registration successful</string>
+</resources>
