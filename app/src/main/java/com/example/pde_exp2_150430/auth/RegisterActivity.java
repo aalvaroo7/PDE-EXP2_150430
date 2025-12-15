@@ -1,6 +1,5 @@
 package com.example.pde_exp2_150430.auth;
 
-
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -40,18 +39,34 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
+        // 1. Validación local de la política de contraseñas
+        if (!isValidPassword(password)) {
+            Toast.makeText(this, R.string.error_password_policy, Toast.LENGTH_LONG).show();
+            return;
+        }
+
         mAuth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, R.string.register_ok, Toast.LENGTH_SHORT).show();
                         finish();
                     } else {
-                        Toast.makeText(
-                                this,
-                                R.string.error_password_policy,
-                                Toast.LENGTH_LONG
-                        ).show();
+                        // 2. Si falla Firebase, mostramos el error real (ej: Email already in use)
+                        String errorMsg = task.getException() != null ? task.getException().getMessage() : "Error desconocido";
+                        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
+    }
+
+    // Método para validar la contraseña con Regex
+    private boolean isValidPassword(String password) {
+        // ^                 -> Inicio de cadena
+        // (?=.*[0-9])       -> Al menos un número
+        // (?=.*[a-z])       -> Al menos una minúscula
+        // (?=.*[A-Z])       -> Al menos una mayúscula
+        // .{8,}             -> Al menos 8 caracteres
+        // $                 -> Fin de cadena
+        String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
+        return password.matches(regex);
     }
 }
