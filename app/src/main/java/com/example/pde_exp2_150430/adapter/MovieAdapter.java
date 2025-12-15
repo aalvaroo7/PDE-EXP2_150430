@@ -54,16 +54,30 @@ public class MovieAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Movie movie = movies.get(position);
 
+        // Configuración común de Glide con imagen de error y placeholder
+        // Esto ayudará a ver si la imagen falla al cargar
+        com.bumptech.glide.request.RequestOptions options = new com.bumptech.glide.request.RequestOptions()
+                .placeholder(R.mipmap.ic_launcher) // Mientras carga
+                .error(R.mipmap.ic_launcher);      // Si falla
+
         if (holder instanceof ListViewHolder) {
             ListViewHolder listHolder = (ListViewHolder) holder;
             listHolder.tvTitle.setText(movie.titulo);
-            Glide.with(context).load(movie.imagen).into(listHolder.ivImage);
+            
+            Glide.with(context)
+                .load(movie.imagen)
+                .apply(options)
+                .into(listHolder.ivImage);
             
             listHolder.itemView.setOnClickListener(v -> goToDetail(movie));
 
         } else if (holder instanceof GridViewHolder) {
             GridViewHolder gridHolder = (GridViewHolder) holder;
-            Glide.with(context).load(movie.imagen).into(gridHolder.ivImage);
+            
+            Glide.with(context)
+                .load(movie.imagen)
+                .apply(options)
+                .into(gridHolder.ivImage);
 
             gridHolder.itemView.setOnClickListener(v -> goToDetail(movie));
         }
