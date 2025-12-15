@@ -1,5 +1,6 @@
 package com.example.pde_exp2_150430.auth;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -8,6 +9,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.pde_exp2_150430.R;
+import com.example.pde_exp2_150430.ui.MainActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -39,7 +41,6 @@ public class RegisterActivity extends AppCompatActivity {
             return;
         }
 
-        // 1. Validación local de la política de contraseñas
         if (!isValidPassword(password)) {
             Toast.makeText(this, R.string.error_password_policy, Toast.LENGTH_LONG).show();
             return;
@@ -49,23 +50,20 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, R.string.register_ok, Toast.LENGTH_SHORT).show();
+                        // Ir a la pantalla principal tras el registro
+                        Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                        // Limpiar la pila de actividades para que no pueda volver atrás al registro
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                         finish();
                     } else {
-                        // 2. Si falla Firebase, mostramos el error real (ej: Email already in use)
                         String errorMsg = task.getException() != null ? task.getException().getMessage() : "Error desconocido";
                         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
                     }
                 });
     }
 
-    // Método para validar la contraseña con Regex
     private boolean isValidPassword(String password) {
-        // ^                 -> Inicio de cadena
-        // (?=.*[0-9])       -> Al menos un número
-        // (?=.*[a-z])       -> Al menos una minúscula
-        // (?=.*[A-Z])       -> Al menos una mayúscula
-        // .{8,}             -> Al menos 8 caracteres
-        // $                 -> Fin de cadena
         String regex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).{8,}$";
         return password.matches(regex);
     }
