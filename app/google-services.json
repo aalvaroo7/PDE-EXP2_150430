@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "667013879730",
+    "project_id": "pde-exp2-150430",
+    "storage_bucket": "pde-exp2-150430.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667013879730:android:7d464c7160d6f62c72f6ab",
+        "android_client_info": {
+          "package_name": "com.example.pde_exp2_150430"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqcOucu1TEK_9HBgWb-NlPjXMwTwDZh7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

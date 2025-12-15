@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">ExamenPelis</string>
+    <string name="email">Email</string>
+    <string name="password">Contraseña</string>
+    <string name="login">Login</string>
+    <string name="register">Registrar</string>
+    <string name="go_register">¿No tienes cuenta? Regístrate</string>
+    <string name="settings">Settings</string>
+    <string name="logout">Logout</string>
+    <string name="grid_mode">Vista en cuadrícula</string>
+
+    <string name="error_empty_fields">Rellena todos los campos</string>
+    <string name="error_login">Error de autenticación</string>
+    <string name="error_password_policy">La contraseña no cumple la política</string>
+    <string name="register_ok">Registro correcto</string>
+</resources>
